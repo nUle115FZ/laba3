@@ -1,83 +1,87 @@
-#include "stack.h"
-#include <stdlib.h>
-#include <stdio.h>
+#include "stack.h"  // Заголовочный файл, содержащий описание структуры стека и узлов, а также прототипы функций
+#include <stdlib.h> // Для работы с динамической памятью (malloc, free)
+#include <stdio.h>  // Для вывода сообщений об ошибках (perror)
 
-// Инициализация стека
+// Функция для инициализации стека
 void initStack(Stack *stack)
 {
-    stack->top = NULL;
-    stack->size = 0;
+    stack->top = NULL; // Устанавливаем вершину стека как NULL (пустой стек)
+    stack->size = 0;   // Устанавливаем размер стека равным 0
 }
 
-// Добавление элемента в стек
+// Функция для добавления элемента в стек
 void push(Stack *stack, Publication item)
 {
+    // Выделяем память для нового узла
     Node *newNode = (Node *)malloc(sizeof(Node));
-    if (!newNode)
+    if (!newNode) // Проверяем, успешно ли выделена память
     {
-        perror("Ошибка выделения памяти");
-        exit(EXIT_FAILURE);
+        perror("Ошибка выделения памяти"); // Выводим сообщение об ошибке
+        exit(EXIT_FAILURE);                // Завершаем программу с кодом ошибки
     }
-    newNode->data = item;
-    newNode->next = stack->top;
-    stack->top = newNode;
-    stack->size++;
+
+    newNode->data = item;       // Заполняем данные узла
+    newNode->next = stack->top; // Указываем, что следующий узел — это текущая вершина стека
+    stack->top = newNode;       // Устанавливаем новую вершину стека
+    stack->size++;              // Увеличиваем размер стека
 }
 
-// Удаление элемента из стека
+// Функция для удаления элемента из стека
 Publication pop(Stack *stack)
 {
-    if (stack->size == 0)
+    if (stack->size == 0) // Если стек пуст, невозможно удалить элемент
     {
-        perror("Попытка удалить элемент из пустого стека");
-        exit(EXIT_FAILURE);
+        perror("Попытка удалить элемент из пустого стека"); // Выводим сообщение об ошибке
+        exit(EXIT_FAILURE);                                 // Завершаем программу с кодом ошибки
     }
-    Node *temp = stack->top;
-    Publication item = temp->data;
-    stack->top = temp->next;
-    free(temp);
-    stack->size--;
-    return item;
+
+    Node *temp = stack->top;       // Сохраняем указатель на текущую вершину
+    Publication item = temp->data; // Сохраняем данные вершины
+    stack->top = temp->next;       // Перемещаем вершину на следующий узел
+    free(temp);                    // Освобождаем память, занятую удаляемым узлом
+    stack->size--;                 // Уменьшаем размер стека
+    return item;                   // Возвращаем данные удалённого элемента
 }
 
-// Получение верхнего элемента стека
+// Функция для получения верхнего элемента стека без его удаления
 Publication *peek(Stack *stack)
 {
-    if (stack->size == 0)
+    if (stack->size == 0) // Если стек пуст, невозможно посмотреть элемент
     {
-        perror("Попытка посмотреть элемент в пустом стеке");
-        exit(EXIT_FAILURE);
+        perror("Попытка посмотреть элемент в пустом стеке"); // Выводим сообщение об ошибке
+        exit(EXIT_FAILURE);                                  // Завершаем программу с кодом ошибки
     }
-    return &stack->top->data;
+    return &stack->top->data; // Возвращаем указатель на данные верхнего элемента
 }
 
-// Получение текущего размера стека
+// Функция для получения текущего размера стека
 int getSize(Stack *stack)
 {
-    return stack->size;
+    return stack->size; // Возвращаем количество элементов в стеке
 }
 
-// Получение элемента по индексу
+// Функция для получения элемента по индексу
 Publication *getElement(Stack *stack, int index)
 {
+    // Проверяем, что индекс находится в пределах допустимого диапазона
     if (index < 0 || index >= stack->size)
     {
-        return NULL;
+        return NULL; // Если индекс некорректен, возвращаем NULL
     }
 
-    Node *current = stack->top;
-    for (int i = 0; i < index; i++)
+    Node *current = stack->top;     // Начинаем с вершины стека
+    for (int i = 0; i < index; i++) // Проходим по элементам до указанного индекса
     {
         current = current->next;
     }
-    return &current->data;
+    return &current->data; // Возвращаем указатель на данные элемента
 }
 
-// Очистка стека
+// Функция для очистки стека (удаления всех элементов)
 void clearStack(Stack *stack)
 {
-    while (stack->size > 0)
+    while (stack->size > 0) // Пока в стеке есть элементы
     {
-        pop(stack);
+        pop(stack); // Удаляем элемент с вершины
     }
 }
